@@ -1,4 +1,6 @@
-LIB_NAME := libc
+LIB_NAME := logger
+
+CFLAGS += -DLOGGER_ENABLE_STDERR
 
 # SOURCES:
 SOURCES_DIRS += src

@@ -1,4 +1,4 @@
-LIB_NAME := libc
+LIB_NAME := exceptions
 
 # SOURCES:
 SOURCES_DIRS += src

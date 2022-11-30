@@ -1,4 +1,4 @@
-LIB_NAME := libc
+LIB_NAME := x11_protocol
 
 # SOURCES:
 SOURCES_DIRS += src

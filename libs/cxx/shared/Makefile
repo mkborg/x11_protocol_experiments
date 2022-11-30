@@ -1,4 +1,4 @@
-LIB_NAME := libc
+LIB_NAME := cxx
 
 # SOURCES:
 SOURCES_DIRS += src

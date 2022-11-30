@@ -11,7 +11,7 @@ const char* getenv(const char* name)
   if (!libc_getenv_result) {
     throw RUNTIME_ERROR_PRINTF("'%s' environment variable is undefined", name);
   }
-  libc_getenv_result.raw().result();
+  return libc_getenv_result.raw().result();
 }
 
 } // namespace cxx

@@ -1,5 +1,9 @@
 include $(ROOTDIR)/common_prefix.Makefile
 
+CFLAGS += -fvisibility=hidden
+LDFLAGS += -Wl,--as-needed
+LDFLAGS += -Wl,-Map=$@.map
+
 TARGET_INSTALL_DIR := $(BASE_INSTALL_DIR)/bin
 #EXECUTABLE := $(TARGET_INSTALL_DIR)/$(TARGET)
 
