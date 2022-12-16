@@ -4,6 +4,7 @@
 #include <logger/logger.h>
 
 #include "cxx_Xau/Xau.h"
+#include <hex_string.h>
 
 /*
 
@@ -33,8 +34,10 @@ void dump_authorization_file()
   for (;;) {
     const auto xauth = ::cxx::Xau::readAuth(fileStreamHandle);
     if (!xauth) { break; }
+    const auto data = toHexString(xauth->data, xauth->data_length);
     IPRINTF("family=%u address_length=%u address='%s' number_length=%u number='%s' name_length=%u name='%s' data_length=%u data='%s'",
         xauth->family, xauth->address_length, xauth->address, xauth->number_length, xauth->number, xauth->name_length,
-        xauth->name, xauth->data_length, xauth->data);
+        //xauth->name, xauth->data_length, xauth->data);
+        xauth->name, xauth->data_length, data.c_str());
   }
 }
