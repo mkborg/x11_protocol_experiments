@@ -16,9 +16,9 @@ LIBS += utils
 LIBS += cxx
 
 #LIBS += cxx_template
-#LIBS += cxx_Xau
+#LIBS += x11_xauth
 
-include PKG_CONFIG.Xau.Makefile
+include PKG_CONFIG.xau.Makefile
 include PKG_CONFIG.common.Makefile
 
 #LDFLAGS += '-Wl,-rpath=$$ORIGIN/$(ROOTDIR)/$(LIB_DIRS)'

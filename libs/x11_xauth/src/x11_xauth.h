@@ -2,8 +2,8 @@
 
 #include <X11/Xauth.h>
 
-namespace cxx {
-namespace Xau {
+namespace x11 {
+namespace xauth {
 
 inline
 char *fileName(void)
@@ -55,5 +55,5 @@ Xauth *GetBestAuthByAddr(
       types_length, types, type_lengths); 
 }
 
-} // namespace Xau
-} // namespace cxx
+} // namespace xauth
+} // namespace x11
