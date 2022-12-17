@@ -1,8 +1,11 @@
 ROOTDIR := ../..
 TARGET := xauth_test
 
+SOURCES += dump_authorization_data.cpp
 SOURCES += dump_authorization_file.cpp
 SOURCES += main.cpp
+SOURCES += test_XauGetAuthByAddr.cpp
+SOURCES += test_XauGetBestAuthByAddr.cpp
 
 SYS_INCLUDE += libs/include
 SYS_INCLUDE += libs/include/utils
@@ -17,6 +20,7 @@ LIBS += cxx
 
 #LIBS += cxx_template
 #LIBS += x11_xauth
+LIBS += x11_constants
 
 include PKG_CONFIG.xau.Makefile
 include PKG_CONFIG.common.Makefile

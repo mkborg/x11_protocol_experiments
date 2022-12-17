@@ -1,8 +1,10 @@
 #include "dump_authorization_file.h"
 
-#include <hex_string.h>
+#include "dump_authorization_data.h"
+
+//#include <hex_string.h>
 #include <libc/file/stream/handle.h>
-#include <logger/logger.h>
+//#include <logger/logger.h>
 #include <x11_xauth/x11_xauth.h>
 
 /*
@@ -29,18 +31,12 @@
 void dump_authorization_file()
 {
   const auto x11_xauth_fileName = ::x11::xauth::fileName();
-  const auto fileStream = ::libc::file::Stream(::libc::file::stream::cxx::open(x11_xauth_fileName, "r"));
+  const auto fileStream = ::libc::file::Stream(::libc::file::stream::cxx::open(x11_xauth_fileName, "rb"));
   const auto fileStreamHandle = fileStream.get();
   for (;;) {
-    const auto xauth = ::x11::xauth::readAuth(fileStreamHandle);
+    const auto xauth = ::x11::xauth::read(fileStreamHandle);
     if (!xauth) { break; }
-    const auto data = toHexString(xauth->data, xauth->data_length);
-    IPRINTF("family=%u address_length=%u address='%.*s' number_length=%u number='%.*s' name_length=%u name='%.*s' data_length=%u data='%s'",
-        xauth->family,
-        xauth->address_length, xauth->address_length, xauth->address,
-        xauth->number_length, xauth->number_length, xauth->number,
-        xauth->name_length, xauth->name_length, xauth->name,
-        xauth->data_length, data.c_str());
-    ::x11::xauth::disposeAuth(xauth);
+    dump_authorization_data(xauth);
+    ::x11::xauth::dispose(xauth);
   }
 }
