@@ -10,8 +10,8 @@ int main()
 {
   dump_authorization_file();
 
-  if (!libc::getenv(x11::constants::environment::DISPLAY)) {
-    IPRINTF("environment variable '%s' is undefined", x11::constants::environment::DISPLAY);
+  if (!::libc::getenv(::x11::constants::environment::DISPLAY)) {
+    IPRINTF("environment variable '%s' is undefined", ::x11::constants::environment::DISPLAY);
   } else {
     test_XauGetAuthByAddr();
     test_XauGetBestAuthByAddr();

@@ -1,8 +1,8 @@
 #include "connection.h"
 
 #include <libc/getenv.h>
-
-#include "logger/debug.h"
+#include <logger/debug.h>
+#include <x11_constants/x11_constants.h>
 
 /*
     https://datacadamia.com/ssh/x11/display
@@ -90,11 +90,12 @@ namespace x11 {
 namespace client2server {
 
 Connection::Connection()
-  : Connection(libc::cxx::getenv("DISPLAY"))
+  : Connection(::libc::cxx::getenv(::x11::constants::environment::DISPLAY))
 {
 }
 
 Connection::Connection(const std::string& display)
+  : connection_config_(display)
 {
   DPRINTF("display='%s'", display.c_str());
 }

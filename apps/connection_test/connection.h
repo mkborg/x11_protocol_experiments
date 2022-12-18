@@ -1,3 +1,7 @@
+#pragma once
+
+#include "connection_config.h"
+
 /*
     This is 'connection' from 'client application' to 'x11 server'.
 
@@ -15,7 +19,10 @@ namespace client2server {
 class Connection
 {
 private:
+  connection::Config connection_config_;
+
 protected:
+
 public:
   Connection();
   Connection(const std::string& display);

@@ -2,6 +2,7 @@ ROOTDIR := ../..
 TARGET := connection_test
 
 SOURCES += connection.cpp
+SOURCES += connection_config.cpp
 SOURCES += main.cpp
 
 SYS_INCLUDE += libs/include
@@ -11,6 +12,8 @@ LIBS += logger
 LIBS += libc
 
 LIBS += cxx
+
+LIBS += x11_constants
 
 #LDFLAGS += '-Wl,-rpath=$$ORIGIN/$(ROOTDIR)/$(LIB_DIRS)'
 LDFLAGS += '-Wl,-rpath=$$ORIGIN/../../libs/lib'
