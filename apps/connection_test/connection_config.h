@@ -28,6 +28,8 @@ public:
     : Config(makeConfig(display))
   {
   }
+
+  inline const std::string& protocol() const { return protocol_; }
 };
 
 } // namespace connection

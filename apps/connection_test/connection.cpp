@@ -1,7 +1,10 @@
 #include "connection.h"
 
+#include "connection_protocol.h"
+
 #include <libc/getenv.h>
 #include <logger/debug.h>
+#include <utils/PREPROCESSOR.h>
 #include <x11_constants/x11_constants.h>
 
 /*
@@ -98,6 +101,8 @@ Connection::Connection(const std::string& display)
   : connection_config_(display)
 {
   DPRINTF("display='%s'", display.c_str());
+  const auto protocol_id = ::x11::client2server::protocol::toId(connection_config_.protocol().c_str());
+  DPRINTF("protocol_id=%u", unsigned(protocol_id));
 }
 
 } // namespace client2server

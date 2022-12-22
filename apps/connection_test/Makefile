@@ -3,6 +3,7 @@ TARGET := connection_test
 
 SOURCES += connection.cpp
 SOURCES += connection_config.cpp
+SOURCES += connection_protocol.cpp
 SOURCES += main.cpp
 
 SYS_INCLUDE += libs/include
