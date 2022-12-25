@@ -1,12 +1,6 @@
-/**
-@file
-@brief    'Deleter' template for std::shared_ptr and std::unique_ptr
-@details  Copyright (c) 2020 Acronis International GmbH
-@author   Mikhail Krivtsov (mikhail.krivtsov@acronis.com)
-@since    $Id: $
-*/
-
 #pragma once
+
+/// @brief    'Deleter' template for std::shared_ptr and std::unique_ptr
 
 namespace Template {
 

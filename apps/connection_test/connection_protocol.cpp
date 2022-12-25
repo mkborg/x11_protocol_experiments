@@ -1,14 +1,15 @@
 #include "connection_protocol.h"
 
+#include <exceptions/runtime_error.h>
 #include <utils/PREPROCESSOR.h>
 
 #include <cstring>	// strcmp()
 
 namespace x11 {
 namespace client2server {
-namespace protocol {
+namespace raw {
 
-static char const * const names[] =
+static char const * const protocol_names[] =
 {
   "tcp",   // TCP over IPv4 or IPv6
   "inet",  // TCP over IPv4 only
@@ -16,31 +17,52 @@ static char const * const names[] =
   "unix",  // UNIX Domain Sockets (same host only)
   "local", // Platform preferred local connection method
 };
-static_assert(ARRAY_SIZE(names) == Id_COUNT,
-    "'protocol::names' doesn't match 'protocol::Id'");
+static_assert(ARRAY_SIZE(protocol_names) == Protocol_COUNT,
+    "'protocol_names' doesn't match 'Protocol_COUNT'");
 
-char const * toString(Id id)
+char const * toString(Protocol protocol)
 {
-  if (unsigned(id) < unsigned(Id::COUNT)) {
-    return names[unsigned(id)];
+  if (unsigned(protocol) < unsigned(Protocol::COUNT)) {
+    return protocol_names[unsigned(protocol)];
   } else {
     return "?";
   }
 }
 
-Id toId(char const * s)
+Protocol toProtocol(char const * s)
 {
   unsigned i = 0;
-  for (; i < ARRAY_SIZE(names); ++i)
+  for (; i < ARRAY_SIZE(protocol_names); ++i)
   {
-    if (!strcmp(s, names[i]))
+    if (!strcmp(s, protocol_names[i]))
     {
       break;
     }
   }
-  return static_cast<Id>(i);
+  return static_cast<Protocol>(i);
 }
 
-} // namespace protocol
+} // namespace raw
+
+namespace cxx {
+
+raw::Protocol toProtocol(const char* s)
+{
+  const auto rawProtocol = raw::toProtocol(s);
+  if (isNG(rawProtocol)) {
+    throw RUNTIME_ERROR("invalid 'protocol'");
+  }
+  return rawProtocol;
+}
+
+OptionalProtocol toOptionalProtocol(const char* s)
+{
+  const auto rawProtocol = raw::toProtocol(s);
+  return isOK(rawProtocol)
+      ? OptionalProtocol(Protocol(rawProtocol))
+      : OptionalProtocol();
+}
+
+} // namespace cxx
 } // namespace client2server
 } // namespace x11
