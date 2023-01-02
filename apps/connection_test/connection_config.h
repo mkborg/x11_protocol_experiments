@@ -30,6 +30,7 @@ public:
   }
 
   inline const std::string& protocol() const { return protocol_; }
+  inline const std::string& host() const { return host_; }
 };
 
 } // namespace connection

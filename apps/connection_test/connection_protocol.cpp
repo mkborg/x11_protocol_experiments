@@ -1,6 +1,7 @@
 #include "connection_protocol.h"
 
 #include <exceptions/runtime_error.h>
+//#include <logger/debug.h>
 #include <utils/PREPROCESSOR.h>
 
 #include <cstring>	// strcmp()
@@ -31,11 +32,13 @@ char const * toString(Protocol protocol)
 
 Protocol toProtocol(char const * s)
 {
+  //DPRINTF("s='%s'", s);
   unsigned i = 0;
   for (; i < ARRAY_SIZE(protocol_names); ++i)
   {
     if (!strcmp(s, protocol_names[i]))
     {
+      //DPRINTF("s='%s' protocol_names[%u]='%s'", s, i, protocol_names[i]);
       break;
     }
   }

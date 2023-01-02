@@ -101,15 +101,22 @@ Connection::Connection(const std::string& display)
   : connection_config_(display)
 {
   DPRINTF("display='%s'", display.c_str());
-  const auto optionalProtocol = ::x11::client2server::cxx::toOptionalProtocol(connection_config_.protocol().c_str());
-  DPRINTF("optionalProtocol={%i,%u}", (bool)(optionalProtocol), unsigned(*optionalProtocol));
-#if 0
-  const auto protocol_id = ::x11::client2server::raw::toProtocol(connection_config_.protocol().c_str());
-#else
-  const auto protocol = ::x11::client2server::cxx::Protocol(connection_config_.protocol().c_str());
-  const auto protocol_id = static_cast<raw::Protocol_storage_type>(protocol);
-#endif
-  DPRINTF("protocol_id=%u", unsigned(protocol_id));
+
+  const auto raw_protocol_id = ::x11::client2server::raw::toProtocol(connection_config_.protocol().c_str());
+  DPRINTF("raw_protocol_id=%u/'%s'", unsigned(raw_protocol_id), ::x11::client2server::raw::toString(raw_protocol_id));
+
+  const auto cxx_optionalProtocol = ::x11::client2server::cxx::toOptionalProtocol(connection_config_.protocol().c_str());
+  DPRINTF("cxx_optionalProtocol={%i,%u/'%s'}", (bool)(cxx_optionalProtocol), unsigned(*cxx_optionalProtocol),
+      ::x11::client2server::raw::toString(*cxx_optionalProtocol));
+
+  const auto optionalProtocol = toOptionalProtocol(connection_config_.protocol().c_str());
+  DPRINTF("optionalProtocol={%i,%u/'%s'}", (bool)(optionalProtocol), unsigned(*optionalProtocol),
+      ::x11::client2server::raw::toString(*optionalProtocol));
+
+  const auto cxx_protocol = ::x11::client2server::cxx::Protocol(connection_config_.protocol().c_str());
+  const auto cxx_raw_protocol_id = static_cast<raw::Protocol_storage_type>(cxx_protocol);
+  DPRINTF("cxx_raw_protocol_id=%u/'%s'", unsigned(cxx_raw_protocol_id),
+      ::x11::client2server::raw::toString(static_cast<raw::Protocol>(cxx_protocol)));
 }
 
 } // namespace client2server

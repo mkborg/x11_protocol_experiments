@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cxx_template/optional.h"
+#include "cxx_template/optional_enum.h"
 
 namespace x11 {
 namespace client2server {
@@ -76,6 +77,14 @@ using OptionalProtocol = ::Template::Optional<Protocol>;
 OptionalProtocol toOptionalProtocol(const char* s);
 
 } // namespace cxx
+
+using OptionalProtocol = ::Template::OptionalEnum<raw::Protocol,raw::Protocol::COUNT>;
+
+inline
+OptionalProtocol toOptionalProtocol(const char* s)
+{
+  return OptionalProtocol(raw::toProtocol(s));
+}
 
 } // namespace client2server
 } // namespace x11
