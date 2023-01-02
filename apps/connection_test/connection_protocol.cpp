@@ -4,7 +4,7 @@
 //#include <logger/debug.h>
 #include <utils/PREPROCESSOR.h>
 
-#include <cstring>	// strcmp()
+#include <cstring>      // strcmp()
 
 namespace x11 {
 namespace client2server {
@@ -12,6 +12,7 @@ namespace raw {
 
 static char const * const protocol_names[] =
 {
+  "",      // 'unspecified' means that protocol shall be selected automatically
   "tcp",   // TCP over IPv4 or IPv6
   "inet",  // TCP over IPv4 only
   "inet6", // TCP over IPv6 only
@@ -23,11 +24,10 @@ static_assert(ARRAY_SIZE(protocol_names) == Protocol_COUNT,
 
 char const * toString(Protocol protocol)
 {
-  if (unsigned(protocol) < unsigned(Protocol::COUNT)) {
-    return protocol_names[unsigned(protocol)];
-  } else {
-    return "?";
-  }
+  return
+      (unsigned(protocol) < unsigned(Protocol::COUNT))
+          ? protocol_names[unsigned(protocol)]
+          : "?";
 }
 
 Protocol toProtocol(char const * s)

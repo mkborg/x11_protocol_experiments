@@ -9,6 +9,7 @@ namespace raw {
 
 using Protocol_storage_type = unsigned short;
 enum class Protocol : Protocol_storage_type {
+  unspecified, // protocol shall be selected automatically
   tcp,   // TCP over IPv4 or IPv6
   inet,  // TCP over IPv4 only
   inet6, // TCP over IPv6 only
