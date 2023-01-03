@@ -3,7 +3,7 @@
 #include <libc/file/stream/fclose.h>
 #include <libc/file/stream/fopen.h>
 
-#include "cxx_template/deleter.h"
+//#include "cxx_template/deleter.h"
 #include "cxx_template/handle.h"
 
 #include "libc/result.h"
@@ -27,15 +27,8 @@ namespace libc {
 namespace file {
 namespace stream {
 
-inline
-void x_fclose(FILE* h) { ::fclose(h); }
-#if 0
-using fileStreamDeleter = ::Template::Deleter<FILE, ::fclose>;
-using Handle = ::Template::Handle<FILE*, nullptr, fileStreamDeleter>;
-#else
-//using Handle = ::Template::Handle<FILE*, nullptr, ::fclose>;
-using Handle = ::Template::Handle<FILE*, nullptr, x_fclose>;
-#endif
+inline void fclose(FILE* h) { ::fclose(h); }
+using Handle = ::Template::Handle<FILE*, nullptr, fclose>;
 
 } // namespace stream
 

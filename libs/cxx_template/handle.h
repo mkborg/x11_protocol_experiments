@@ -43,6 +43,11 @@ public:
     close();
   }
 
+  inline explicit Handle()
+    : handle_(CLOSED)
+  {
+  }
+
   inline explicit Handle(T handle)
     : handle_(handle)
   {

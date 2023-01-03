@@ -2,6 +2,8 @@
 
 #include "connection_config.h"
 
+#include "libc/handle.h"
+
 /*
     This is 'connection' from 'client application' to 'x11 server'.
 
@@ -20,6 +22,7 @@ class Connection
 {
 private:
   connection::Config connection_config_;
+  ::libc::Fd fd_;
 
 protected:
 
