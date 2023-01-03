@@ -2,10 +2,10 @@
 
 #include "dump_authorization_data.h"
 
-//#include <hex_string.h>
-#include <libc/file/stream/handle.h>
-//#include <logger/logger.h>
-#include <x11_xauth/x11_xauth.h>
+//#include "hex_string.h"
+#include "libc/file/stream/handle.h"
+//#include "logger/logger.h"
+#include "x11_xauth/x11_xauth.h"
 
 /*
 

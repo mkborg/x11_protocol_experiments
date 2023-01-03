@@ -7,8 +7,8 @@ SOURCES += main.cpp
 SOURCES += test_XauGetAuthByAddr.cpp
 SOURCES += test_XauGetBestAuthByAddr.cpp
 
-SYS_INCLUDE += libs/include
-SYS_INCLUDE += libs/include/utils
+INCLUDE += libs/include
+INCLUDE += libs/include/utils
 LIB_DIRS += libs/lib
 
 LIBS += logger

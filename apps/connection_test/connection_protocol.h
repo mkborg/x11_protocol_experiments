@@ -1,7 +1,7 @@
 #pragma once
 
-#include "cxx_template/optional.h"
-#include "cxx_template/optional_enum.h"
+#include "template/optional.h"
+#include "template/optional_enum.h"
 
 namespace x11 {
 namespace client2server {

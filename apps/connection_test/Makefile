@@ -6,7 +6,7 @@ SOURCES += connection_config.cpp
 SOURCES += connection_protocol.cpp
 SOURCES += main.cpp
 
-SYS_INCLUDE += libs/include
+INCLUDE += libs/include
 LIB_DIRS += libs/lib
 
 LIBS += logger

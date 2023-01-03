@@ -2,10 +2,10 @@
 
 #include "dump_authorization_data.h"
 
-#include <logger/logger.h>
-#include <utils/PREPROCESSOR.h>
-#include <x11_constants/x11_constants.h>
-#include <x11_xauth/x11_xauth.h>
+#include "logger/logger.h"
+#include "utils/PREPROCESSOR.h"
+#include "x11_constants/x11_constants.h"
+#include "x11_xauth/x11_xauth.h"
 
 static char const * const auth_names[] =
 {

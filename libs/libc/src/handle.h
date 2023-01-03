@@ -1,7 +1,7 @@
 #pragma once
 
-//#include "cxx_template/deleter.h"
-#include "cxx_template/handle.h"
+//#include "template/deleter.h"
+#include "template/handle.h"
 #include "libc/close.h"
 
 namespace libc {

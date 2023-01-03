@@ -2,10 +2,10 @@
 
 #include "connection_protocol.h"
 
-#include <libc/getenv.h>
-#include <logger/debug.h>
-#include <utils/PREPROCESSOR.h>
-#include <x11_constants/x11_constants.h>
+#include "libc/getenv.h"
+#include "logger/debug.h"
+#include "utils/PREPROCESSOR.h"
+#include "x11_constants/x11_constants.h"
 
 /*
     https://datacadamia.com/ssh/x11/display

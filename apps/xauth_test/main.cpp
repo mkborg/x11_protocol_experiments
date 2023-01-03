@@ -2,9 +2,9 @@
 #include "test_XauGetAuthByAddr.h"
 #include "test_XauGetBestAuthByAddr.h"
 
-#include <libc/getenv.h>
-#include <logger/logger.h>
-#include <x11_constants/x11_constants.h>
+#include "libc/getenv.h"
+#include "logger/logger.h"
+#include "x11_constants/x11_constants.h"
 
 int main()
 {

@@ -1,7 +1,7 @@
 #include "connection_config.h"
 
-#include <exceptions/runtime_error.h>
-#include <logger/debug.h>
+#include "exceptions/runtime_error.h"
+#include "logger/debug.h"
 
 #include <string>
 
@@ -14,8 +14,7 @@ Config Config::makeConfig(const std::string& displayConfigString)
 {
   std::string protocol;
   std::string host;
-  unsigned short display;
-  unsigned short screen;
+  unsigned short display = 0;
 
   const auto displayConfigString_size = displayConfigString.size();
   bool slash_seen = false;
@@ -62,8 +61,7 @@ Config Config::makeConfig(const std::string& displayConfigString)
       }
     }
   }
-  const auto screen_n = std::stoull(displayConfigString.substr(s, i - s));
-  screen = screen_n;
+  const auto screen = (unsigned short) std::stoull(displayConfigString.substr(s, i - s));
   DPRINTF("protocol='%s' host='%s' display=%u screen=%u", protocol.c_str(), host.c_str(), display, screen);
   return Config(protocol, host, display, screen);
 }
