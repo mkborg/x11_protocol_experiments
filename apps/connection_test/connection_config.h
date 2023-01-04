@@ -31,6 +31,8 @@ public:
 
   inline const std::string& protocol() const { return protocol_; }
   inline const std::string& host() const { return host_; }
+  inline unsigned short display() const { return display_; }
+  inline unsigned short screen() const { return screen_; }
 };
 
 } // namespace connection

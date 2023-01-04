@@ -1,6 +1,7 @@
 #include "connection.h"
 
 #include "connection_protocol.h"
+#include "x11_unix_endpoint.h"
 
 #include "libc/getenv.h"
 #include "logger/debug.h"
@@ -117,6 +118,10 @@ Connection::Connection(const std::string& display)
   const auto cxx_raw_protocol_id = static_cast<raw::Protocol_storage_type>(cxx_protocol);
   DPRINTF("cxx_raw_protocol_id=%u/'%s'", unsigned(cxx_raw_protocol_id),
       ::x11::client2server::raw::toString(static_cast<raw::Protocol>(cxx_protocol)));
+
+  const auto endPoint = ::x11::unix::EndPoint(connection_config_.display());
+  const auto endPoint_socketPath = endPoint.socketPath();
+  DPRINTF("endPoint_socketPath='%s'", endPoint_socketPath.c_str());
 }
 
 } // namespace client2server
