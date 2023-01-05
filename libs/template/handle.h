@@ -2,8 +2,6 @@
 
 /// @brief    'handle' template
 
-//#include "debug.h"
-
 namespace Template {
 
 template<typename T, T CLOSED, void(*deleter)(T)>
@@ -54,18 +52,19 @@ public:
   }
 
   explicit Handle(const Handle& other) = delete;
-  Handle& operator =(const Handle& other) = delete;
-
   explicit Handle(Handle&& other)
     : handle_(other.handle_)
   {
     other.handle_ = CLOSED;
   }
 
+  Handle& operator =(const Handle& other) = delete;
   Handle& operator =(Handle&& other)
   {
-    reset(other.handle_);
-    other.handle_ = CLOSED;
+    if (this != &other) {
+      reset(other.handle_);
+      other.handle_ = CLOSED;
+    }
     return *this;
   }
 };

@@ -14,15 +14,22 @@ class Socket
 {
 public:
   inline explicit Socket()
-    : ::libc::socket::Fd() {}
+    : ::libc::socket::Fd()
+  {
+  }
+
   inline explicit Socket(int fd)
-    : ::libc::socket::Fd(fd) {}
+    : ::libc::socket::Fd(fd)
+  {
+  }
+
   Socket(int domain, int type, int protocol)
-    : ::libc::socket::Fd(domain, type, protocol) {}
+    : ::libc::socket::Fd(domain, type, protocol)
+  {
+  }
 
   Socket(const Socket&) = delete;
   Socket(Socket&& other)
-    //: ::libc::socket::Fd(other)
     : ::libc::socket::Fd(std::move(other))
   {
   }
