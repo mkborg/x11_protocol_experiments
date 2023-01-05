@@ -4,6 +4,9 @@
 #include "x11_unix_endpoint.h"
 
 #include "libc/getenv.h"
+#include "libc/socket/connect.h"
+//#include "libc/socket/socket.h"
+#include "libc/template/socket.h"
 #include "logger/debug.h"
 #include "utils/PREPROCESSOR.h"
 #include "x11_constants/x11_constants.h"
@@ -122,6 +125,11 @@ Connection::Connection(const std::string& display)
   const auto endPoint = ::x11::unix::EndPoint(connection_config_.display());
   const auto endPoint_socketPath = endPoint.socketPath();
   DPRINTF("endPoint_socketPath='%s'", endPoint_socketPath.c_str());
+
+  auto socket = ::libc::Unix::StreamSocket();
+  ::libc::socket::cxx::connect(socket.get(), static_cast<const sockaddr*>(endPoint), endPoint.size());
+  DPRINTF("connected");
+  fd_ = std::move(socket);
 }
 
 } // namespace client2server

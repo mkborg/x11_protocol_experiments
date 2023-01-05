@@ -10,7 +10,7 @@ inline
 void close(int h) { ::libc::raw::close(h); }
 
 using Handle = ::Template::Handle<int, -1, close>;
-using Fd = Handle;
+//using Fd = Handle;
 
 /*
 class Fd

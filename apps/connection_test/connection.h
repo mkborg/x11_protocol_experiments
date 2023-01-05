@@ -2,7 +2,9 @@
 
 #include "connection_config.h"
 
-#include "libc/handle.h"
+//#include "libc/handle.h"
+//#include "libc/template/socket.h"
+#include "libc/base/socket.h"
 
 /*
     This is 'connection' from 'client application' to 'x11 server'.
@@ -22,7 +24,9 @@ class Connection
 {
 private:
   connection::Config connection_config_;
-  ::libc::Fd fd_;
+  //::libc::Fd fd_;
+  //::libc::Unix::StreamSocket fd_;
+  ::libc::base::Socket fd_;
 
 protected:
 
