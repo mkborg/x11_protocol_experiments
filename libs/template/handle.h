@@ -25,7 +25,7 @@ public:
 
   T release()
   {
-    auto handle = handle_;
+    const auto handle = handle_;
     handle_ = CLOSED;
     return handle;
   }
@@ -52,8 +52,9 @@ public:
   }
 
   explicit Handle(const Handle& other) = delete;
-  explicit Handle(Handle&& other)
-    : handle_(other.handle_)
+  Handle(Handle&& other)
+    //: handle_(other.handle_)
+    : handle_(std::move(other.handle_))
   {
     other.handle_ = CLOSED;
   }

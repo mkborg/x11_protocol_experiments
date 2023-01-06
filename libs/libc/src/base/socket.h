@@ -13,6 +13,8 @@ class Socket
   : public ::libc::socket::Fd
 {
 public:
+  ~Socket() = default;
+
   inline explicit Socket()
     : ::libc::socket::Fd()
   {
@@ -23,21 +25,21 @@ public:
   {
   }
 
-  Socket(int domain, int type, int protocol)
+  inline Socket(int domain, int type, int protocol)
     : ::libc::socket::Fd(domain, type, protocol)
   {
   }
 
   Socket(const Socket&) = delete;
-  Socket(Socket&& other)
+  inline Socket(Socket&& other)
     : ::libc::socket::Fd(std::move(other))
   {
   }
 
   Socket& operator =(const Socket&) = delete;
-  Socket& operator =(Socket&& other)
+  inline Socket& operator =(Socket&& other)
   {
-    ::libc::socket::Fd(std::move(other));
+    ::libc::socket::Fd::operator =(std::move(other));
     return *this;
   }
 

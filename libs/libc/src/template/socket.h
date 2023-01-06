@@ -14,25 +14,39 @@ class Socket
 {
 public:
   ~Socket() = default;
-  Socket()
+
+  Socket(void)
     : ::libc::base::Socket(addressFamily, socketType, protocol)
   {
   }
 
-  Socket(const Socket&) = delete;
+  Socket(int fd) = delete;
+/*
+  Socket(int fd)
+    : ::libc::base::Socket(fd)
+  {
+  }
+*/
 
+  Socket(const Socket&) = delete;
+  Socket(Socket&& other) = delete;
+/*
   Socket(Socket&& other)
     : ::libc::base::Socket(std::move(other))
   {
   }
+*/
 
   Socket& operator =(const Socket&) = delete;
-
+  Socket& operator =(Socket&& other) = delete;
+/*
   Socket& operator =(Socket&& other)
   {
-    ::libc::base::Socket(std::move(other));
+    //::libc::base::Socket::operator =(std::move(other));
+    ::libc::base::Socket::operator =(other);
     return *this;
   }
+*/
 };
 
 } // namespace Template

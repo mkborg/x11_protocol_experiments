@@ -11,4 +11,5 @@ HEADERS += logger.h
 
 SOURCES += debug.c
 SOURCES += gettid.c
+SOURCES += hex_dump.c
 SOURCES += logger.c

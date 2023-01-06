@@ -6,6 +6,9 @@ SOURCES += getenv.cpp
 SOURCES += file/stat.cpp
 SOURCES += file/stream/fopen.cpp
 
+SOURCES += io/read.cpp
+SOURCES += io/write.cpp
+
 SOURCES += mkdirs.cpp
 
 SOURCES += socket/connect.cpp
