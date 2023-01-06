@@ -5,7 +5,7 @@ SOURCES += connection.cpp
 SOURCES += connection_config.cpp
 SOURCES += connection_protocol.cpp
 SOURCES += main.cpp
-SOURCES += x11_unix_endpoint.cpp
+#SOURCES += x11_unix_endpoint.cpp
 
 INCLUDE += libs/include
 LIB_DIRS += libs/lib
@@ -16,6 +16,7 @@ LIBS += libc
 LIBS += cxx
 
 LIBS += x11_constants
+LIBS += x11_protocol
 
 #LDFLAGS += '-Wl,-rpath=$$ORIGIN/$(ROOTDIR)/$(LIB_DIRS)'
 LDFLAGS += '-Wl,-rpath=$$ORIGIN/../../libs/lib'

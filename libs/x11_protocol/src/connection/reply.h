@@ -2,8 +2,10 @@
 
 #include <stdint.h>     // [u]int(8|16|32|64)_t
 
+namespace x11 {
+namespace protocol {
 namespace connection {
-namespace response {
+namespace reply {
 
 struct Header
 {
@@ -15,5 +17,7 @@ struct Header
   //uint32_t data[]; // data[data_size]
 };
 
-} // namespace response
+} // namespace reply
 } // namespace connection
+} // namespace protocol
+} // namespace x11

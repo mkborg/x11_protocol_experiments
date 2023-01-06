@@ -1,3 +1,3 @@
 HEADERS += x11_types.h
 
-#SOURCES += *.cpp
+SOURCES += x11_unix_endpoint.cpp

@@ -1,21 +1,20 @@
 #include "connection.h"
 
 #include "connection_protocol.h"
-#include "x11_unix_endpoint.h"
 
 #include "cxx/raw/data.h"
 #include "libc/getenv.h"
 #include "libc/io/read.h"
 #include "libc/io/write.h"
 #include "libc/socket/connect.h"
-//#include "libc/socket/socket.h"
 #include "libc/template/socket.h"
 #include "logger/debug.h"
 #include "logger/hex_dump.h"
 #include "utils/PREPROCESSOR.h"
 #include "x11_constants/x11_constants.h"
-#include "x11_protocol/connection_query.h"
-#include "x11_protocol/connection_response.h"
+#include "x11_protocol/connection/query.h"
+#include "x11_protocol/connection/reply.h"
+#include "x11_protocol/x11_unix_endpoint.h"
 
 #include <stdint.h>	// [u]int(8|16|32|64)_t
 
@@ -145,25 +144,36 @@ Connection::Connection(const std::string& display)
   //DPRINTF("fd_=%p.get()=%i", &fd_, fd_.get());
 
   static const
-  ::connection::query::Header connectionQueryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
+  ::x11::protocol::connection::query::Header connectionQueryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
     // uint8_t[authorization_protocol_name]
     // uint8_t[pad(authorization_protocol_name)]
     // uint8_t[authorization_protocol_data]
     // uint8_t[pad(authorization_protocol_data)]
   ::libc::io::cxx::write_exact(fd_.get(), &connectionQueryHeader, sizeof(connectionQueryHeader));
 
-  ::connection::response::Header connectionResponseHeader;
-  ::libc::io::cxx::read_exact(fd_.get(), &connectionResponseHeader, sizeof(connectionResponseHeader));
+  ::x11::protocol::connection::reply::Header connectionReplyHeader;
+  ::libc::io::cxx::read_exact(fd_.get(), &connectionReplyHeader, sizeof(connectionReplyHeader));
   DPRINTF("status=%u reason_size=%u major=%u minor=%u data_size=%u/%lu",
-      connectionResponseHeader.status, connectionResponseHeader.reason_size,
-      connectionResponseHeader.protocol_major_version, connectionResponseHeader.protocol_minor_version,
-      connectionResponseHeader.data_size, (size_t) (connectionResponseHeader.data_size * sizeof(uint32_t)));
-  DPRINTF("data_size=%u/%lu", connectionResponseHeader.data_size, connectionResponseHeader.data_size * sizeof(uint32_t));
+      connectionReplyHeader.status, connectionReplyHeader.reason_size,
+      connectionReplyHeader.protocol_major_version, connectionReplyHeader.protocol_minor_version,
+      connectionReplyHeader.data_size, (size_t) (connectionReplyHeader.data_size * sizeof(uint32_t)));
+  DPRINTF("data_size=%u/%lu", connectionReplyHeader.data_size, connectionReplyHeader.data_size * sizeof(uint32_t));
 
-  auto rawData = ::cxx::raw::Data(connectionResponseHeader.data_size * sizeof(uint32_t));
-  const auto data_size = ::libc::io::cxx::read(fd_.get(), rawData.data(), rawData.size());
-  DPRINTF("data_size=%zu", data_size);
-  DHEX(rawData.data(), data_size);
+  {
+    // connection reply data
+    auto rawData = ::cxx::raw::Data(connectionReplyHeader.data_size * sizeof(uint32_t));
+    const auto data_size = ::libc::io::cxx::read(fd_.get(), rawData.data(), rawData.size());
+    DPRINTF("data_size=%zu", data_size);
+    DHEX(rawData.data(), data_size);
+  }
+
+  {
+    // unexpected extra data
+    auto rawData = ::cxx::raw::Data(0x1000);
+    const auto data_size = ::libc::io::cxx::read(fd_.get(), rawData.data(), rawData.size());
+    DPRINTF("data_size=%zu", data_size);
+    DHEX(rawData.data(), data_size);
+  }
 }
 
 } // namespace client2server

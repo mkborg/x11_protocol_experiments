@@ -10,15 +10,15 @@ namespace libc {
 namespace base {
 
 class EndPoint
-  : public cxx::raw::Data
+  : public ::cxx::raw::Data
 {
 public:
   explicit EndPoint(size_t size)
-    : cxx::raw::Data(size, 0)
+    : ::cxx::raw::Data(size, 0)
   {
   }
   EndPoint(const void* data, size_t size)
-    : cxx::raw::Data(data, size)
+    : ::cxx::raw::Data(data, size)
   {
   }
   inline EndPoint(const sockaddr* addr, socklen_t addrlen)
