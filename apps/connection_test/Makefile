@@ -12,11 +12,9 @@ LIB_DIRS += libs/lib
 
 LIBS += logger
 LIBS += libc
+LIBS += x11
 
 LIBS += cxx
-
-LIBS += x11_constants
-LIBS += x11_protocol
 
 #LDFLAGS += '-Wl,-rpath=$$ORIGIN/$(ROOTDIR)/$(LIB_DIRS)'
 LDFLAGS += '-Wl,-rpath=$$ORIGIN/../../libs/lib'

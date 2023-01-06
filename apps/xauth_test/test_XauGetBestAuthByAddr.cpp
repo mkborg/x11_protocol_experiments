@@ -4,8 +4,8 @@
 
 #include "logger/logger.h"
 #include "utils/PREPROCESSOR.h"
-#include "x11_constants/x11_constants.h"
-#include "x11_xauth/x11_xauth.h"
+#include "x11/constants.h"
+#include "x11/xauth.h"
 
 static char const * const auth_names[] =
 {

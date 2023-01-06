@@ -2,7 +2,7 @@
 
 #include "hex_string.h"
 #include "logger/logger.h"
-#include "x11_xauth/x11_xauth.h"
+#include "x11/xauth.h"
 
 /*
     #include <X11/Xauth.h>

@@ -4,7 +4,7 @@
 
 #include "libc/getenv.h"
 #include "logger/logger.h"
-#include "x11_constants/x11_constants.h"
+#include "x11/constants.h"
 
 int main()
 {

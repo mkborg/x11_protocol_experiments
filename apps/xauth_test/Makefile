@@ -14,13 +14,10 @@ LIB_DIRS += libs/lib
 LIBS += logger
 LIBS += libc
 LIBS += utils
+LIBS += x11
 
 # Note: 'libc' depends on 'cxx'. It means that 'cxx' must be specified after 'libc'.
 LIBS += cxx
-
-#LIBS += cxx_template
-#LIBS += x11_xauth
-LIBS += x11_constants
 
 include PKG_CONFIG.xau.Makefile
 include PKG_CONFIG.common.Makefile

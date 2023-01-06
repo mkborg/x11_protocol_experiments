@@ -1,1 +1,1 @@
-libs/x11_xauth/PKG_CONFIG.xau.Makefile
+libs/x11/PKG_CONFIG.xau.Makefile

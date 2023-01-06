@@ -11,10 +11,10 @@
 #include "logger/debug.h"
 #include "logger/hex_dump.h"
 #include "utils/PREPROCESSOR.h"
-#include "x11_constants/x11_constants.h"
-#include "x11_protocol/connection/query.h"
-#include "x11_protocol/connection/reply.h"
-#include "x11_protocol/x11_unix_endpoint.h"
+#include "x11/constants.h"
+#include "x11/protocol/connection/query.h"
+#include "x11/protocol/connection/reply.h"
+#include "x11/unix_endpoint.h"
 
 #include <stdint.h>	// [u]int(8|16|32|64)_t
 
@@ -164,9 +164,9 @@ Connection::Connection(const std::string& display)
     auto rawData = ::cxx::raw::Data(connectionReplyHeader.data_size * sizeof(uint32_t));
     const auto data_size = ::libc::io::cxx::read(fd_.get(), rawData.data(), rawData.size());
     DPRINTF("data_size=%zu", data_size);
-    DHEX(rawData.data(), data_size);
+    //DHEX(rawData.data(), data_size);
   }
-
+/*
   {
     // unexpected extra data
     auto rawData = ::cxx::raw::Data(0x1000);
@@ -174,6 +174,7 @@ Connection::Connection(const std::string& display)
     DPRINTF("data_size=%zu", data_size);
     DHEX(rawData.data(), data_size);
   }
+*/
 }
 
 } // namespace client2server

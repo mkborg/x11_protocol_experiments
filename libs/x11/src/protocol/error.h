@@ -41,6 +41,6 @@ struct Header
   uint8_t unused_11[21];
 };
 
-} // namespace reply
+} // namespace error
 } // namespace protocol
 } // namespace x11
