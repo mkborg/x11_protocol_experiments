@@ -21,12 +21,10 @@ namespace reply {
 
 struct Header
 {
-/*
-  uint8_t opcode;	// major opcode
+  uint8_t status;       // 0 means 'error', 1 'success reply', 2..34 events
   uint8_t unused_1;
-  uint16_t size;	// reply length, expressed in units of four bytes
-  // uint32_t data[size - 1]
-*/
+  uint16_t size;
+  uint8_t unused_4[28];
 };
 
 } // namespace reply

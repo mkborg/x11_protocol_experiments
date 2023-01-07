@@ -2,12 +2,12 @@
 
 namespace x11 {
 namespace protocol {
-namespace server {
-namespace message {
+namespace event {
 
 enum class Id
 {
-  Error = 0,
+  Error			= 0,
+  SuccessReply		= 1,
 
   KeyPressEvent		= 2,
   KeyReleaseEvent	= 3,
@@ -44,7 +44,8 @@ enum class Id
   MappingNotifyEvent	= 34,
 };
 
-} // namespace message
-} // namespace server
+char const * toString(Id id);
+
+} // namespace event
 } // namespace protocol
 } // namespace x11

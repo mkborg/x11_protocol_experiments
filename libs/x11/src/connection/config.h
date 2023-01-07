@@ -3,7 +3,6 @@
 #include <string>
 
 namespace x11 {
-namespace client2server {
 namespace connection {
 
 class Config
@@ -36,5 +35,4 @@ public:
 };
 
 } // namespace connection
-} // namespace client2server
 } // namespace x11

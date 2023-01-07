@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cxx/raw/data.h"
+
 #include <stdint.h>     // [u]int(8|16|32|64)_t
 
 /*
@@ -105,7 +107,7 @@ enum class Id
   PolyRectangle			= 67,
   PolyArc			= 68,
   FillPoly			= 69,
-  PolyFillRectangle		= 70
+  PolyFillRectangle		= 70,
   PolyFillArc			= 71,
   PutImage			= 72,
   GetImage			= 73,
@@ -139,7 +141,7 @@ enum class Id
   GetKeyboardMapping		= 101,
   ChangeKeyboardControl		= 102,
   GetKeyboardControl		= 103,
-  Bell				= 104
+  Bell				= 104,
   ChangePointerControl		= 105,
   GetPointerControl		= 106,
   SetScreenSaver		= 107,
@@ -159,12 +161,37 @@ enum class Id
   NoOperation			= 127,
 };
 
+template<typename T>
+inline uint16_t scaleSize(T size)
+{
+  return (size + 3) / 4;
+}
+
 struct Header
 {
   uint8_t opcode;	// major opcode
   uint8_t unused_1;
   uint16_t size;	// request length, expressed in units of four bytes
   // uint32_t data[size - 1]
+};
+
+class GetAtomName
+{
+private:
+  uint32_t atom_;
+public:
+  inline GetAtomName(uint32_t atom)
+    : atom_(atom)
+  {
+  }
+  operator cxx::raw::Data() const;
+};
+
+class NoOperation
+{
+public:
+  NoOperation() = default;
+  operator cxx::raw::Data() const;
 };
 
 } // namespace request

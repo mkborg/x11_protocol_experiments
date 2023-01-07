@@ -3,7 +3,6 @@
 #include <stdint.h>     // [u]int(8|16|32|64)_t
 
 namespace x11 {
-namespace protocol {
 namespace connection {
 namespace reply {
 
@@ -19,5 +18,4 @@ struct Header
 
 } // namespace reply
 } // namespace connection
-} // namespace protocol
 } // namespace x11

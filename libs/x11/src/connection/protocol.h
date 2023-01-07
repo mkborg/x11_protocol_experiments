@@ -4,11 +4,14 @@
 #include "template/optional_enum.h"
 
 namespace x11 {
-namespace client2server {
+namespace connection {
+
 namespace raw {
 
 using Protocol_storage_type = unsigned short;
-enum class Protocol : Protocol_storage_type {
+enum class Protocol
+  : Protocol_storage_type
+{
   unspecified, // protocol shall be selected automatically
   tcp,   // TCP over IPv4 or IPv6
   inet,  // TCP over IPv4 only
@@ -20,14 +23,12 @@ enum class Protocol : Protocol_storage_type {
 };
 static const unsigned constexpr Protocol_COUNT = unsigned(Protocol::COUNT);
 
-inline
-bool isOK(Protocol protocol)
+inline bool isOK(Protocol protocol)
 {
   return unsigned(protocol) < Protocol_COUNT;
 }
 
-inline
-bool isNG(Protocol protocol)
+inline bool isNG(Protocol protocol)
 {
   return !isOK(protocol);
 }
@@ -39,7 +40,7 @@ const char* toString(Protocol protocol);
 
 namespace cxx {
 
-raw::Protocol toProtocol(const char* s);
+//raw::Protocol toProtocol(const char* s);
 
 class Protocol
 {
@@ -53,7 +54,7 @@ public:
   }
 
   Protocol(const char* s)
-    : Protocol(toProtocol(s))
+    : Protocol(raw::toProtocol(s))
   {
   }
 
@@ -87,5 +88,5 @@ OptionalProtocol toOptionalProtocol(const char* s)
   return OptionalProtocol(raw::toProtocol(s));
 }
 
-} // namespace client2server
+} // namespace connection
 } // namespace x11

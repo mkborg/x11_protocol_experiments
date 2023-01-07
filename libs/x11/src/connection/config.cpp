@@ -1,12 +1,9 @@
-#include "connection_config.h"
+#include "x11/connection/config.h"
 
 #include "exceptions/runtime_error.h"
 #include "logger/debug.h"
 
-#include <string>
-
 namespace x11 {
-namespace client2server {
 namespace connection {
 
 // [[protocol/]hostname:]displaynumber[.screennumber]
@@ -67,5 +64,4 @@ Config Config::makeConfig(const std::string& displayConfigString)
 }
 
 } // namespace connection
-} // namespace client2server
 } // namespace x11

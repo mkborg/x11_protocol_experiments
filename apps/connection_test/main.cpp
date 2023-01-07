@@ -5,7 +5,7 @@
 int main()
 {
   ++debug_level;
-  x11::client2server::Connection connection;
+  x11::Connection connection;
 
   return 0;
 }

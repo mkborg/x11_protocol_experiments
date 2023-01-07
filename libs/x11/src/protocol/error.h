@@ -30,14 +30,37 @@ namespace x11 {
 namespace protocol {
 namespace error {
 
+enum class Id
+{
+  Request	= 1,
+  Value		= 2,
+  Window	= 3,
+  Pixmap	= 4,
+  Atom		= 5,
+  Cursor	= 6,
+  Font		= 7,
+  Match		= 8,
+  Drawable	= 9,
+  Access	= 10,
+  Alloc		= 11,
+  Colormap	= 12,
+  GContext	= 13,
+  IDChoice	= 14,
+  Name		= 15,
+  Length	= 16,
+  Implementation = 17,
+};
+
+char const * toString(Id id);
+
 struct Header
 {
   uint8_t status;	// 0 means 'error'
   uint8_t error_code;
   uint16_t sequence_number;
   uint32_t bad;		// 'bad value', 'bad resouce id', 'bad atom id'
-  uint16_t major_opcode;
-  uint8_t minor_opcode;
+  uint16_t minor_opcode;
+  uint8_t major_opcode;
   uint8_t unused_11[21];
 };
 

@@ -1,7 +1,5 @@
 #include "connection.h"
 
-#include "connection_protocol.h"
-
 #include "cxx/raw/data.h"
 #include "libc/getenv.h"
 #include "libc/io/read.h"
@@ -11,9 +9,14 @@
 #include "logger/debug.h"
 #include "logger/hex_dump.h"
 #include "utils/PREPROCESSOR.h"
+#include "x11/connection/protocol.h"
+#include "x11/connection/query.h"
+#include "x11/connection/reply.h"
 #include "x11/constants.h"
-#include "x11/protocol/connection/query.h"
-#include "x11/protocol/connection/reply.h"
+#include "x11/protocol/error.h"
+#include "x11/protocol/event.h"
+#include "x11/protocol/request.h"
+#include "x11/protocol/reply.h"
 #include "x11/unix_endpoint.h"
 
 #include <stdint.h>	// [u]int(8|16|32|64)_t
@@ -101,7 +104,6 @@
 */
 
 namespace x11 {
-namespace client2server {
 
 Connection::Connection()
   : Connection(::libc::cxx::getenv(::x11::constants::environment::DISPLAY))
@@ -113,21 +115,21 @@ Connection::Connection(const std::string& display)
 {
   DPRINTF("display='%s'", display.c_str());
 
-  const auto raw_protocol_id = ::x11::client2server::raw::toProtocol(connection_config_.protocol().c_str());
-  DPRINTF("raw_protocol_id=%u/'%s'", unsigned(raw_protocol_id), ::x11::client2server::raw::toString(raw_protocol_id));
+  const auto raw_protocol_id = ::x11::connection::raw::toProtocol(connection_config_.protocol().c_str());
+  DPRINTF("raw_protocol_id=%u/'%s'", unsigned(raw_protocol_id), ::x11::connection::raw::toString(raw_protocol_id));
 
-  const auto cxx_optionalProtocol = ::x11::client2server::cxx::toOptionalProtocol(connection_config_.protocol().c_str());
+  const auto cxx_optionalProtocol = ::x11::connection::cxx::toOptionalProtocol(connection_config_.protocol().c_str());
   DPRINTF("cxx_optionalProtocol={%i,%u/'%s'}", (bool)(cxx_optionalProtocol), unsigned(*cxx_optionalProtocol),
-      ::x11::client2server::raw::toString(*cxx_optionalProtocol));
+      ::x11::connection::raw::toString(*cxx_optionalProtocol));
 
-  const auto optionalProtocol = toOptionalProtocol(connection_config_.protocol().c_str());
+  const auto optionalProtocol = ::x11::connection::toOptionalProtocol(connection_config_.protocol().c_str());
   DPRINTF("optionalProtocol={%i,%u/'%s'}", (bool)(optionalProtocol), unsigned(*optionalProtocol),
-      ::x11::client2server::raw::toString(*optionalProtocol));
+      ::x11::connection::raw::toString(*optionalProtocol));
 
-  const auto cxx_protocol = ::x11::client2server::cxx::Protocol(connection_config_.protocol().c_str());
-  const auto cxx_raw_protocol_id = static_cast<raw::Protocol_storage_type>(cxx_protocol);
+  const auto cxx_protocol = ::x11::connection::cxx::Protocol(connection_config_.protocol().c_str());
+  const auto cxx_raw_protocol_id = static_cast<::x11::connection::raw::Protocol_storage_type>(cxx_protocol);
   DPRINTF("cxx_raw_protocol_id=%u/'%s'", unsigned(cxx_raw_protocol_id),
-      ::x11::client2server::raw::toString(static_cast<raw::Protocol>(cxx_protocol)));
+      ::x11::connection::raw::toString(static_cast<::x11::connection::raw::Protocol>(cxx_protocol)));
 
   const auto endPoint = ::x11::unix::EndPoint(connection_config_.display());
   const auto endPoint_socketPath = endPoint.socketPath();
@@ -144,14 +146,14 @@ Connection::Connection(const std::string& display)
   //DPRINTF("fd_=%p.get()=%i", &fd_, fd_.get());
 
   static const
-  ::x11::protocol::connection::query::Header connectionQueryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
+  ::x11::connection::query::Header connectionQueryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
     // uint8_t[authorization_protocol_name]
     // uint8_t[pad(authorization_protocol_name)]
     // uint8_t[authorization_protocol_data]
     // uint8_t[pad(authorization_protocol_data)]
   ::libc::io::cxx::write_exact(fd_.get(), &connectionQueryHeader, sizeof(connectionQueryHeader));
 
-  ::x11::protocol::connection::reply::Header connectionReplyHeader;
+  ::x11::connection::reply::Header connectionReplyHeader;
   ::libc::io::cxx::read_exact(fd_.get(), &connectionReplyHeader, sizeof(connectionReplyHeader));
   DPRINTF("status=%u reason_size=%u major=%u minor=%u data_size=%u/%lu",
       connectionReplyHeader.status, connectionReplyHeader.reason_size,
@@ -166,6 +168,74 @@ Connection::Connection(const std::string& display)
     DPRINTF("data_size=%zu", data_size);
     //DHEX(rawData.data(), data_size);
   }
+#if 0
+  {
+    const auto request = ::x11::protocol::request::NoOperation().operator ::cxx::raw::Data();
+    ::libc::io::cxx::write_exact(fd_.get(), request.data(), request.size());
+    DPRINTF("'request' sent");
+
+    auto reply = ::cxx::raw::Data(32);
+    const auto reply_size = ::libc::io::cxx::read(fd_.get(), reply.data(), reply.size());
+    DPRINTF("reply_size=%zu", reply_size);
+    DHEX(reply.data(), reply_size);
+  }
+#endif
+  {
+    const auto request = ::x11::protocol::request::GetAtomName(1).operator ::cxx::raw::Data();
+    ::libc::io::cxx::write_exact(fd_.get(), request.data(), request.size());
+    DPRINTF("request '%s(%s)' sent", "GetAtomName", "1");
+
+    auto reply = ::cxx::raw::Data(0x1000);
+    const auto reply_size = ::libc::io::cxx::read(fd_.get(), reply.data(), reply.size());
+    DPRINTF("reply_size=%zu", reply_size);
+    if (sizeof(::x11::protocol::reply::Header) <= reply_size) {
+      const auto replyHeader = static_cast<const ::x11::protocol::reply::Header*>(reply.data());
+      DPRINTF("replyHeader: status=%u/'%s' size=%u/%u",
+          replyHeader->status,
+          ::x11::protocol::event::toString( (::x11::protocol::event::Id) (replyHeader->status) ),
+          replyHeader->size, replyHeader->size * 4);
+      if (::x11::protocol::event::Id::Error == (::x11::protocol::event::Id) (replyHeader->status)) {
+        const auto errorHeader = static_cast<const ::x11::protocol::error::Header*>(reply.data());
+        DPRINTF("error_code=%u sequence_number=%u bad=0x%X/%u major_opcode=%u minor_opcode=%u",
+            errorHeader->error_code,
+            errorHeader->sequence_number,
+            errorHeader->bad,
+            errorHeader->bad,
+            errorHeader->major_opcode,
+            errorHeader->minor_opcode
+        );
+      }
+    }
+    DHEX(reply.data(), reply_size);
+  }
+  {
+    const auto request = ::x11::protocol::request::GetAtomName(0).operator ::cxx::raw::Data();
+    ::libc::io::cxx::write_exact(fd_.get(), request.data(), request.size());
+    DPRINTF("request '%s(%s)' sent", "GetAtomName", "0");
+
+    auto reply = ::cxx::raw::Data(0x1000);
+    const auto reply_size = ::libc::io::cxx::read(fd_.get(), reply.data(), reply.size());
+    DPRINTF("reply_size=%zu", reply_size);
+    if (sizeof(::x11::protocol::reply::Header) <= reply_size) {
+      const auto replyHeader = static_cast<const ::x11::protocol::reply::Header*>(reply.data());
+      DPRINTF("replyHeader: status=%u/'%s' size=%u/%u",
+          replyHeader->status,
+          ::x11::protocol::event::toString( (::x11::protocol::event::Id) (replyHeader->status) ),
+          replyHeader->size, replyHeader->size * 4);
+      if (::x11::protocol::event::Id::Error == (::x11::protocol::event::Id) (replyHeader->status)) {
+        const auto errorHeader = static_cast<const ::x11::protocol::error::Header*>(reply.data());
+        DPRINTF("error_code=%u sequence_number=%u bad=0x%X/%u major_opcode=%u minor_opcode=%u",
+            errorHeader->error_code,
+            errorHeader->sequence_number,
+            errorHeader->bad,
+            errorHeader->bad,
+            errorHeader->major_opcode,
+            errorHeader->minor_opcode
+        );
+      }
+    }
+    DHEX(reply.data(), reply_size);
+  }
 /*
   {
     // unexpected extra data
@@ -177,5 +247,4 @@ Connection::Connection(const std::string& display)
 */
 }
 
-} // namespace client2server
 } // namespace x11

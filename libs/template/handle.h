@@ -2,6 +2,8 @@
 
 /// @brief    'handle' template
 
+#include <utility>	// std::move()
+
 namespace Template {
 
 template<typename T, T CLOSED, void(*deleter)(T)>

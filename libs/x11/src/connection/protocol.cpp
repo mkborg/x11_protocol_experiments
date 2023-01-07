@@ -1,4 +1,4 @@
-#include "connection_protocol.h"
+#include "x11/connection/protocol.h"
 
 #include "exceptions/runtime_error.h"
 //#include "logger/debug.h"
@@ -7,7 +7,8 @@
 #include <cstring>      // strcmp()
 
 namespace x11 {
-namespace client2server {
+namespace connection {
+
 namespace raw {
 
 static char const * const protocol_names[] =
@@ -67,5 +68,6 @@ OptionalProtocol toOptionalProtocol(const char* s)
 }
 
 } // namespace cxx
-} // namespace client2server
+
+} // namespace connection
 } // namespace x11
