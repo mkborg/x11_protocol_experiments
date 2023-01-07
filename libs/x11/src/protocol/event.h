@@ -43,7 +43,6 @@ enum class Id
   ClientMessageEvent	= 33,
   MappingNotifyEvent	= 34,
 };
-
 char const * toString(Id id);
 
 } // namespace event

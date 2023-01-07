@@ -160,6 +160,7 @@ enum class Id
 
   NoOperation			= 127,
 };
+char const * toString(Id id);
 
 template<typename T>
 inline uint16_t scaleSize(T size)

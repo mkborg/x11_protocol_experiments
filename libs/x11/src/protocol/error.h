@@ -50,7 +50,6 @@ enum class Id
   Length	= 16,
   Implementation = 17,
 };
-
 char const * toString(Id id);
 
 struct Header

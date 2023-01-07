@@ -1,7 +1,9 @@
 #pragma once
 
 #include "libc/base/socket.h"
-#include "x11/connection/config.h"
+//#include "libc/socket/fd.h"
+
+#include <string>
 
 /*
     This is 'connection' from 'client application' to 'x11 server'.
@@ -12,20 +14,19 @@
     mk: Looks like most of the time it will be 'unix stream socket'.
 */
 
-#include <string>
-
 namespace x11 {
 
 class Connection
+  : public ::libc::base::Socket
 {
-private:
-  ::x11::connection::Config connection_config_;
-  ::libc::base::Socket fd_;
-
-protected:
-
 public:
   Connection();
+
+  Connection(int fd)
+    : ::libc::base::Socket(fd)
+  {
+  }
+
   Connection(const std::string& display);
 };
 

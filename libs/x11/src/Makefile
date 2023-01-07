@@ -19,6 +19,7 @@ HEADERS += x11/xauth.h
 SOURCES += x11/connection/config.cpp
 SOURCES += x11/connection/protocol.cpp
 
+SOURCES += x11/connection.cpp
 SOURCES += x11/constants.cpp
 
 SOURCES += x11/protocol/error.cpp

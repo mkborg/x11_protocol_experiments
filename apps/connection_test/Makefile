@@ -1,7 +1,6 @@
 ROOTDIR := ../..
 TARGET := connection_test
 
-SOURCES += connection.cpp
 SOURCES += main.cpp
 
 INCLUDE += libs/include

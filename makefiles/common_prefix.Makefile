@@ -64,4 +64,5 @@ $(OBJECTS_DIR)/%.cpp.o: %.cpp | $$(dir $$@)
 
 
 # Load dependencies if present
+$(info "dependencies: '$(OBJECTS:.o=.d)'")
 -include $(OBJECTS:.o=.d)

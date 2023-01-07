@@ -45,7 +45,6 @@ static char const * const names[] =
   "ClientMessageEvent"		, // 33
   "MappingNotifyEvent"		, // 34
 };
-
 char const * toString(Id id)
 {
   return

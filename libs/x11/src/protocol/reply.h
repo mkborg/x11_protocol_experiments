@@ -25,6 +25,7 @@ struct Header
   uint8_t unused_1;
   uint16_t size;
   uint8_t unused_4[28];
+  // uint32_t data[size];
 };
 
 } // namespace reply
