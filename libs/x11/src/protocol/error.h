@@ -56,7 +56,7 @@ struct Header
 {
   uint8_t status;	// 0 means 'error'
   uint8_t error_code;
-  uint16_t sequence_number;
+  uint16_t sequence;
   uint32_t bad;		// 'bad value', 'bad resouce id', 'bad atom id'
   uint16_t minor_opcode;
   uint8_t major_opcode;

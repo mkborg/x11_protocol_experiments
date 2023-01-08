@@ -6,9 +6,17 @@ namespace x11 {
 namespace connection {
 namespace reply {
 
+enum class Id
+{
+  Failed	= 0,
+  Success	= 1,
+  Authenticate	= 2,
+};
+char const * toString(Id id);
+
 struct Header
 {
-  uint8_t status; // 0 failed, 1 success, 2 authenticate
+  uint8_t id; // 0 failed, 1 success, 2 authenticate
   uint8_t reason_size;
   uint16_t protocol_major_version;
   uint16_t protocol_minor_version;

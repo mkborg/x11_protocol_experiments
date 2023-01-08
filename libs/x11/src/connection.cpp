@@ -1,6 +1,7 @@
 #include "connection.h"
 
 #include "cxx/raw/data.h"
+#include "exceptions/runtime_error.h"
 #include "libc/getenv.h"
 #include "libc/io/read.h"
 #include "libc/io/write.h"
@@ -132,32 +133,40 @@ static int connect(const std::string& display)
   DPRINTF("connected");
 
   static const
-  ::x11::connection::query::Header connectionQueryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
-    // uint8_t[authorization_protocol_name]
-    // uint8_t[pad(authorization_protocol_name)]
-    // uint8_t[authorization_protocol_data]
-    // uint8_t[pad(authorization_protocol_data)]
-  ::libc::io::cxx::write_exact(socket.get(), &connectionQueryHeader, sizeof(connectionQueryHeader));
+  ::x11::connection::query::Header queryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
+  ::libc::io::cxx::write_exact(socket.get(), &queryHeader, sizeof(queryHeader));
 
-  ::x11::connection::reply::Header connectionReplyHeader;
-  ::libc::io::cxx::read_exact(socket.get(), &connectionReplyHeader, sizeof(connectionReplyHeader));
-  const auto data_size = connectionReplyHeader.data_size * sizeof(uint32_t);
-  DPRINTF("status=%u reason_size=%u major=%u minor=%u data_size=%u*4=%zu",
-      connectionReplyHeader.status, connectionReplyHeader.reason_size,
-      connectionReplyHeader.protocol_major_version, connectionReplyHeader.protocol_minor_version,
-      connectionReplyHeader.data_size, data_size);
-  //DPRINTF("data_size=%u*4=%lu", connectionReplyHeader.data_size, data_size);
+  ::x11::connection::reply::Header replyHeader;
+  ::libc::io::cxx::read_exact(socket.get(), &replyHeader, sizeof(replyHeader));
+  const auto data_size = replyHeader.data_size * sizeof(uint32_t);
+  DPRINTF("id=%u reason_size=%u major=%u minor=%u data_size=%u*4=%zu",
+      replyHeader.id,
+      replyHeader.reason_size,
+      replyHeader.protocol_major_version, replyHeader.protocol_minor_version,
+      replyHeader.data_size, data_size);
 
-  // connection info data
-  auto connectionInfoData = ::cxx::raw::Data(data_size);
-#if 0
-  const auto readed_size = ::libc::io::cxx::read(socket.get(), connectionInfoData.data(), connectionInfoData.size());
-  DPRINTF("readed_size=%zu", readed_size);
-#else
-  ::libc::io::cxx::read_exact(socket.get(), connectionInfoData.data(), connectionInfoData.size());
-#endif
-  //DHEX(connectionInfoData.data(), readed_size);
+  auto extraData = ::cxx::raw::Data(data_size);
+  if (data_size) {
+    ::libc::io::cxx::read_exact(socket.get(), extraData.data(), extraData.size());
+    //DHEX(extraData.data(), readed_size);
+  }
 
+  const auto replyId = static_cast<::x11::connection::reply::Id>(replyHeader.id);
+  if (::x11::connection::reply::Id::Failed == replyId) {
+    const auto reason = std::string( static_cast<const char*>(extraData.data()), replyHeader.reason_size);
+    throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u reason='%s'",
+        replyHeader.id, ::x11::connection::reply::toString(replyId), reason.c_str());
+  } else if (::x11::connection::reply::Id::Success == replyId) {
+    // FIXME: parse 'connection info'
+  } else if (::x11::connection::reply::Id::Authenticate == replyId) {
+    // Warning: 'reason_size' is not specified in 'Authenticate' documentation
+    const auto reason = std::string( static_cast<const char*>(extraData.data()), replyHeader.reason_size);
+    throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u reason='%s'",
+        replyHeader.id, ::x11::connection::reply::toString(replyId), reason.c_str());
+  } else {
+    throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u",
+        replyHeader.id, ::x11::connection::reply::toString(replyId));
+  }
   return socket.release();
 }
 

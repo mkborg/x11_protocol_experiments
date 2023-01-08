@@ -5,6 +5,7 @@
 namespace x11 {
 namespace connection {
 
+// mk: Looks like base part of 'info' has size of 32 bytes
 struct Info
 {
   uint32_t release_number;

@@ -33,6 +33,7 @@ static void tryGetAtomName(const ::x11::Connection& connection, uint32_t atom)
   // 'error' and 'event' always have size of 32 bytes.
   // 'reply' always have header with 32 bytes size.
   // 'reply' may have 'additional data' with size specified in 'header'.
+#if 0
   auto eventData = ::cxx::raw::Data(sizeof(::x11::protocol::event::Base));
   ::libc::io::cxx::read_exact(connection.get(), eventData.data(), eventData.size());
   const auto eventBase = static_cast<const ::x11::protocol::event::Base*>(eventData.data());
@@ -41,13 +42,22 @@ static void tryGetAtomName(const ::x11::Connection& connection, uint32_t atom)
       eventBase->id, ::x11::protocol::event::toString(eventId),
       eventBase->sendEvent);
   DHEX(eventData.data(), eventData.size());
+#else
+  ::x11::protocol::event::Base eventBase;
+  ::libc::io::cxx::read_exact(connection.get(), &eventBase, sizeof(eventBase));
+  const auto eventId = static_cast<::x11::protocol::event::Id>(eventBase.id);
+  DPRINTF("eventData: id=%u/'%s' sendEvent=%u",
+      eventBase.id, ::x11::protocol::event::toString(eventId),
+      eventBase.sendEvent);
+  DHEX(&eventBase, sizeof(eventBase));
+#endif
 
   if (::x11::protocol::event::Id::Error == eventId) {
-    const auto errorHeader = static_cast<const ::x11::protocol::error::Header*>(eventData.data());
-    DPRINTF("error_code=%u/'%s' sequence_number=%u bad=0x%X/%u major_opcode=%u/'%s' minor_opcode=%u",
+    const auto errorHeader = reinterpret_cast<const ::x11::protocol::error::Header*>(&eventBase);
+    DPRINTF("error_code=%u/'%s' sequence=%u bad=0x%X/%u major_opcode=%u/'%s' minor_opcode=%u",
         errorHeader->error_code,
         ::x11::protocol::error::toString( (::x11::protocol::error::Id) (errorHeader->error_code) ),
-        errorHeader->sequence_number,
+        errorHeader->sequence,
         errorHeader->bad,
         errorHeader->bad,
         errorHeader->major_opcode,
@@ -55,12 +65,12 @@ static void tryGetAtomName(const ::x11::Connection& connection, uint32_t atom)
         errorHeader->minor_opcode
     );
   } else if (::x11::protocol::event::Id::SuccessReply == eventId) {
-    const auto replyBase = static_cast<const ::x11::protocol::reply::Base*>(eventData.data());
+    const auto replyBase = reinterpret_cast<const ::x11::protocol::reply::Base*>(&eventBase);
     const auto extraData_size = replyBase->size * 4;
-    DPRINTF("replyBase: status=%u/'%s' sequence_number=%u size=%u/%u",
+    DPRINTF("replyBase: status=%u/'%s' sequence=%u size=%u/%u",
         replyBase->status,
         ::x11::protocol::event::toString( (::x11::protocol::event::Id) (replyBase->status) ),
-        replyBase->sequence_number,
+        replyBase->sequence,
         replyBase->size, extraData_size);
     if (extraData_size) {
       auto extraData = ::cxx::raw::Data(extraData_size);
@@ -75,7 +85,7 @@ static void tryGetAtomName(const ::x11::Connection& connection, uint32_t atom)
     }
   } else {
     // TODO: decode event
-    DHEX(eventData.data(), eventData.size());
+    DHEX(&eventBase, sizeof(eventBase));
   }
 }
 

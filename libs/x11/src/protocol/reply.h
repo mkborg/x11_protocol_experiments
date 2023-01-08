@@ -23,7 +23,7 @@ struct Base
 {
   uint8_t status;       // 0 means 'error', 1 'success reply', 2..34 events
   uint8_t unused_1;
-  uint16_t sequence_number;
+  uint16_t sequence;
   uint32_t size;
   uint8_t unused_4[24];
   // uint32_t data[size];
