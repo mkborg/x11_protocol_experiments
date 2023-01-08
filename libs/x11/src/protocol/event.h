@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>     // [u]int(8|16|32|64)_t
+
 namespace x11 {
 namespace protocol {
 namespace event {

@@ -150,8 +150,12 @@ static int connect(const std::string& display)
 
   // connection info data
   auto connectionInfoData = ::cxx::raw::Data(data_size);
+#if 0
   const auto readed_size = ::libc::io::cxx::read(socket.get(), connectionInfoData.data(), connectionInfoData.size());
   DPRINTF("readed_size=%zu", readed_size);
+#else
+  ::libc::io::cxx::read_exact(socket.get(), connectionInfoData.data(), connectionInfoData.size());
+#endif
   //DHEX(connectionInfoData.data(), readed_size);
 
   return socket.release();
