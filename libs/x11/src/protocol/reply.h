@@ -19,12 +19,13 @@ namespace x11 {
 namespace protocol {
 namespace reply {
 
-struct Header
+struct Base
 {
   uint8_t status;       // 0 means 'error', 1 'success reply', 2..34 events
   uint8_t unused_1;
-  uint16_t size;
-  uint8_t unused_4[28];
+  uint16_t sequence_number;
+  uint32_t size;
+  uint8_t unused_4[24];
   // uint32_t data[size];
 };
 
