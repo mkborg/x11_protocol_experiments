@@ -14,8 +14,8 @@ struct Info
   uint32_t motion_buffer_size;
   uint16_t vendor_size;
   uint16_t request_maximum_size;
-  uint8_t number_of_screens_in_roots;
-  uint8_t number_of_formats_in_pixmap_formats;
+  uint8_t screens_count;
+  uint8_t formats_count;
   uint8_t image_byte_order; // 0 LSBFirst, 1 MSBFirst
   uint8_t bitmap_format_bit_order; // 0 LeastSignificant, 1 MostSignificant
   uint8_t bitmap_format_scanline_unit;

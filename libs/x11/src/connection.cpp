@@ -11,6 +11,7 @@
 //#include "logger/hex_dump.h"
 //#include "utils/PREPROCESSOR.h"
 #include "x11/connection/config.h"
+#include "x11/connection/info.h"
 #include "x11/connection/protocol.h"
 #include "x11/connection/query.h"
 #include "x11/connection/reply.h"
@@ -157,6 +158,66 @@ static int connect(const std::string& display)
     throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u reason='%s'",
         replyHeader.id, ::x11::connection::reply::toString(replyId), reason.c_str());
   } else if (::x11::connection::reply::Id::Success == replyId) {
+
+    if (extraData.size() < sizeof(::x11::connection::Info)) {
+      throw RUNTIME_ERROR_PRINTF("'connection::reply' is too short ('info' underflow)");
+    }
+    const auto info = static_cast<const ::x11::connection::Info*>(extraData.data());
+    DPRINTF("release_number=%u resource_id_base=0x%X/%u resource_id_mask=0x%X/%u",
+        info->release_number,
+        info->resource_id_base, info->resource_id_base,
+        info->resource_id_mask, info->resource_id_mask);
+    DPRINTF("motion_buffer_size=%u vendor_size=%u request_maximum_size=%u screens_count=%u formats_count=%u",
+        info->motion_buffer_size,
+        info->vendor_size,
+        info->request_maximum_size,
+        info->screens_count,
+        info->formats_count);
+    DPRINTF("image_byte_order=%u bitmap_format_bit_order=%u",
+        info->image_byte_order, info->bitmap_format_bit_order);
+    DPRINTF("bitmap_format_scanline_unit=%u bitmap_format_scanline_pad=%u",
+        info->bitmap_format_scanline_unit, info->bitmap_format_scanline_pad);
+    DPRINTF("min_keycode=%u max_keycode=%u",
+        info->min_keycode, info->max_keycode);
+
+    const auto storage4vendor = extraData.size() - sizeof(::x11::connection::Info);
+    if (storage4vendor < info->vendor_size) {
+      throw RUNTIME_ERROR_PRINTF("'connection::reply' is too short ('%s' underflow)", "vendor");
+    }
+    const auto vendor_data = static_cast<const char*>(extraData.data()) + sizeof(::x11::connection::Info);
+    const auto vendor = std::string(vendor_data, info->vendor_size);
+    DPRINTF("vendor='%s'", vendor.c_str());
+
+    const auto vendor_storage_size = (info->vendor_size + 3) & ~3;
+    DPRINTF("vendor_storage_size=%u", vendor_storage_size);
+
+    const auto storage4formats = storage4vendor - vendor_storage_size;
+    const auto formats_storage_size = sizeof(::x11::connection::Format) * info->formats_count;
+    if (storage4formats < formats_storage_size) {
+      throw RUNTIME_ERROR_PRINTF("'connection::reply' is too short ('%s' underflow)", "formats");
+    }
+    const auto vendor_data_end = vendor_data + vendor_storage_size;
+    const auto formats = reinterpret_cast<const ::x11::connection::Format*>(vendor_data_end);
+    for (unsigned i = 0; i < info->formats_count; ++i) {
+      DPRINTF("format[%u] depth=%u bits_per_pixel=%u scanline_pad=%u", i,
+          formats[i].depth, formats[i].bits_per_pixel, formats[i].scanline_pad);
+    }
+
+    const auto storage4screens = storage4formats - formats_storage_size;
+    const auto screens_storage_size = sizeof(::x11::connection::Screen) * info->screens_count;
+    if (storage4screens < screens_storage_size) {
+      throw RUNTIME_ERROR_PRINTF("'connection::reply' is too short ('%s' underflow)", "screens");
+    }
+    const auto formats_data_end = vendor_data_end + formats_storage_size;
+    const auto screens = reinterpret_cast<const ::x11::connection::Screen*>(formats_data_end);
+    for (unsigned i = 0; i < info->screens_count; ++i) {
+      DPRINTF("screen[%u] root_window=%u default_colormap=%u white_pixel=0x%X/%u black_pixel=0x%X/%u", i,
+          screens[i].root_window,
+          screens[i].default_colormap,
+          screens[i].white_pixel, screens[i].white_pixel,
+          screens[i].black_pixel, screens[i].black_pixel);
+    }
+
     // FIXME: parse 'connection info'
   } else if (::x11::connection::reply::Id::Authenticate == replyId) {
     // Warning: 'reason_size' is not specified in 'Authenticate' documentation
