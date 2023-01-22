@@ -87,12 +87,6 @@ struct VisualType
   uint32_t unused_20;
 };
 
-struct ResourceId
-{
-  uint32_t base;
-  uint32_t mask;
-};
-
 } // namespace impl
 
 struct Format
@@ -149,20 +143,29 @@ struct Screen
 using Screens = std::vector<Screen>;
 void dump(const Screens& screens);
 
+struct ResourceId
+{
+  uint32_t base;
+  uint32_t mask;
+};
+
 class Info
 {
 private:
+  ResourceId resourceId_;
   std::string vendor_;
   Formats formats_;
   Screens screens_;
 
 public:
   Info(
+      const ResourceId& resourceId,
       const std::string& vendor,
       const Formats& formats,
       const Screens& screens
   )
-    : vendor_(vendor)
+    : resourceId_(resourceId)
+    , vendor_(vendor)
     , formats_(formats)
     , screens_(screens)
   {
@@ -173,7 +176,7 @@ public:
   //Info(const ::libc::base::Socket& socket);
   Info(const ::cxx::raw::Data& data);
   Info(Info&& other)
-    : Info(other.vendor_, other.formats_, other.screens_)
+    : Info(other.resourceId_, other.vendor_, other.formats_, other.screens_)
   {
   }
 };

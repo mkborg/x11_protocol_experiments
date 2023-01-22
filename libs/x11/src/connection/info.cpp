@@ -191,6 +191,10 @@ static Info parseInfo(const ::cxx::raw::Data& infoData)
   auto imageView = ByteView(infoData.data(), infoData.size());
 
   const auto info = parseInfo(imageView);
+  const auto resourceId = ResourceId{
+      info->resource_id_base,
+      info->resource_id_mask
+  };
   const auto vendor = parseVendor(imageView, info);
   const auto formats = parseFormats(imageView, info);
   const auto screens = parseScreens(imageView, info);
@@ -203,7 +207,7 @@ static Info parseInfo(const ::cxx::raw::Data& infoData)
     DPRINTF("There is no unused data left in info image");
   }
 
-  return Info(vendor, formats, screens);
+  return Info(resourceId, vendor, formats, screens);
 }
 
 void dump(const Screens& screens)
