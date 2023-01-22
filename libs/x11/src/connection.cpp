@@ -102,7 +102,7 @@
 
 namespace x11 {
 
-static int connect(const std::string& display)
+static ::libc::base::Socket connect(const std::string& display)
 {
   DPRINTF("display='%s'", display.c_str());
   const auto connectionConfig = ::x11::connection::Config(display);
@@ -132,7 +132,12 @@ static int connect(const std::string& display)
   ::libc::Unix::StreamSocket socket;
   ::libc::socket::cxx::connect(socket.get(), static_cast<const sockaddr*>(endPoint), endPoint.size());
   DPRINTF("connected");
+  return std::move(socket);
+}
 
+//static ::x11::connection::Info connect(const ::libc::base::Socket& socket)
+static ::cxx::raw::Data getInfoImage(const ::libc::base::Socket& socket)
+{
   static const
   ::x11::connection::query::Header queryHeader = { 'l', 0, 11, 0, 0, 0, 0 };
   ::libc::io::cxx::write_exact(socket.get(), &queryHeader, sizeof(queryHeader));
@@ -154,14 +159,18 @@ static int connect(const std::string& display)
 
   const auto replyId = static_cast<::x11::connection::reply::Id>(replyHeader.id);
   if (::x11::connection::reply::Id::Failed == replyId) {
+
     const auto reason = std::string( static_cast<const char*>(extraData.data()), replyHeader.reason_size);
     throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u reason='%s'",
         replyHeader.id, ::x11::connection::reply::toString(replyId), reason.c_str());
+
   } else if (::x11::connection::reply::Id::Success == replyId) {
 
     if (extraData.size() < sizeof(::x11::connection::Info)) {
       throw RUNTIME_ERROR_PRINTF("'connection::reply' is too short ('info' underflow)");
     }
+    return extraData;
+/*
     const auto info = static_cast<const ::x11::connection::Info*>(extraData.data());
     DPRINTF("release_number=%u resource_id_base=0x%X/%u resource_id_mask=0x%X/%u",
         info->release_number,
@@ -219,6 +228,7 @@ static int connect(const std::string& display)
     }
 
     // FIXME: parse 'connection info'
+*/
   } else if (::x11::connection::reply::Id::Authenticate == replyId) {
     // Warning: 'reason_size' is not specified in 'Authenticate' documentation
     const auto reason = std::string( static_cast<const char*>(extraData.data()), replyHeader.reason_size);
@@ -228,7 +238,14 @@ static int connect(const std::string& display)
     throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u",
         replyHeader.id, ::x11::connection::reply::toString(replyId));
   }
-  return socket.release();
+}
+
+Connection::Connection(::libc::base::Socket&& socket)
+  : ::libc::base::Socket( std::move(socket) )
+  , ::x11::connection::Info(
+      ::x11::getInfoImage( *static_cast<const ::libc::base::Socket*>(this) )
+  )
+{
 }
 
 Connection::Connection(const std::string& display)

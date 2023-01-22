@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libc/base/socket.h"
-//#include "libc/socket/fd.h"
+#include "x11/connection/info.h"
 
 #include <string>
 
@@ -18,16 +18,28 @@ namespace x11 {
 
 class Connection
   : public ::libc::base::Socket
+  , public ::x11::connection::Info
 {
 public:
-  Connection();
+  explicit Connection();
+  explicit Connection(const std::string& display);
 
+/*
   Connection(int fd)
     : ::libc::base::Socket(fd)
+    , info_(::x11:connection::Info(
   {
   }
-
-  Connection(const std::string& display);
+*/
+#if 1
+  explicit Connection(::libc::base::Socket&& socket);
+#else
+  explicit Connection(::libc::base::Socket&& socket)
+    : ::libc::base::Socket( std::move(socket) )
+    , ::x11:connection::Info(static_cast<const ::libc::base::Socket*>(this))
+  {
+  }
+#endif
 };
 
 } // namespace x11
