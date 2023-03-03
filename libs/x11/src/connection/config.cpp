@@ -12,6 +12,7 @@ Config Config::makeConfig(const std::string& displayConfigString)
   std::string protocol;
   std::string host;
   unsigned short display = 0;
+  unsigned short screen = 0;
 
   const auto displayConfigString_size = displayConfigString.size();
   bool slash_seen = false;
@@ -58,7 +59,13 @@ Config Config::makeConfig(const std::string& displayConfigString)
       }
     }
   }
-  const auto screen = (unsigned short) std::stoull(displayConfigString.substr(s, i - s));
+  if (dot_seen) {
+    const auto screen_n = (unsigned short) std::stoull(displayConfigString.substr(s, i - s));
+    screen = screen_n;
+  } else if (colon_seen) {
+    const auto display_n = std::stoull(displayConfigString.substr(s, i - s));
+    display = display_n;
+  }
   DPRINTF("protocol='%s' host='%s' display=%u screen=%u", protocol.c_str(), host.c_str(), display, screen);
   return Config(protocol, host, display, screen);
 }
