@@ -144,6 +144,7 @@ static ::cxx::raw::Data getInfoImage(const ::libc::base::Socket& socket)
 
   ::x11::connection::reply::Header replyHeader;
   ::libc::io::cxx::read_exact(socket.get(), &replyHeader, sizeof(replyHeader));
+  //DHEX(&replyHeader, sizeof(replyHeader));
   const auto data_size = replyHeader.data_size * sizeof(uint32_t);
   DPRINTF("id=%u reason_size=%u major=%u minor=%u data_size=%u*4=%zu",
       replyHeader.id,
@@ -154,14 +155,16 @@ static ::cxx::raw::Data getInfoImage(const ::libc::base::Socket& socket)
   auto extraData = ::cxx::raw::Data(data_size);
   if (data_size) {
     ::libc::io::cxx::read_exact(socket.get(), extraData.data(), extraData.size());
-    //DHEX(extraData.data(), readed_size);
+    //DHEX(extraData.data(), extraData.size());
   }
 
   const auto replyId = static_cast<::x11::connection::reply::Id>(replyHeader.id);
   if (::x11::connection::reply::Id::Failed == replyId) {
 
     const auto reason = std::string( static_cast<const char*>(extraData.data()), replyHeader.reason_size);
-    throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u reason='%s'",
+    // FIXME: Make sure 'reason' does not contain dangerous symbols. Pay attention to '\n' in the following example:
+    // 'Authorization required, but no authorization protocol specified\n'
+    throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u/'%s' reason='%s'",
         replyHeader.id, ::x11::connection::reply::toString(replyId), reason.c_str());
 
   } else if (::x11::connection::reply::Id::Success == replyId) {
