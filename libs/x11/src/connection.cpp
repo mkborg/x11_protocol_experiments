@@ -1,5 +1,6 @@
 #include "connection.h"
 
+#include "utils/escape_control_bytes.h"
 #include "cxx/raw/data.h"
 #include "exceptions/runtime_error.h"
 #include "libc/getenv.h"
@@ -164,8 +165,9 @@ static ::cxx::raw::Data getInfoImage(const ::libc::base::Socket& socket)
     const auto reason = std::string( static_cast<const char*>(extraData.data()), replyHeader.reason_size);
     // FIXME: Make sure 'reason' does not contain dangerous symbols. Pay attention to '\n' in the following example:
     // 'Authorization required, but no authorization protocol specified\n'
+    const auto safe_reason = escape_control_bytes(reason);
     throw RUNTIME_ERROR_PRINTF("Unexpected connection reply id=%u/'%s' reason='%s'",
-        replyHeader.id, ::x11::connection::reply::toString(replyId), reason.c_str());
+        replyHeader.id, ::x11::connection::reply::toString(replyId), safe_reason.c_str());
 
   } else if (::x11::connection::reply::Id::Success == replyId) {
 

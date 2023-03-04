@@ -8,7 +8,11 @@ LIB_DIRS += libs/lib
 
 LIBS += logger
 LIBS += libc
+# 'x11' depends on 'cxx' and 'utils'
 LIBS += x11
+
+# 'utils' depends on 'cxx'
+LIBS += utils
 
 LIBS += cxx
 
